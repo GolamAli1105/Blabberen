@@ -7,12 +7,48 @@ import { io } from "../lib/socket.js";
 export const getUsersForSidebar = async (req, res) => {
     try{
         const loggedInUserId = req.user._id;
-        const filteredUsers = await User.find({_id: {$ne: loggedInUserId}}).select("-password");
+        const filteredUsers = await User.findById(loggedInUserId).populate({
+            path: "contacts",
+            select: "-password",
+        });
 
         res.status(200).json(filteredUsers);
     }
     catch(error){
         console.log("Error in getUsersForSidebar controller: ", error.message);
+        res.status(500).json({error: "Internal Server Error"});
+    }
+};
+
+export const searchUsers = async (req, res) => {
+    try{
+        const { query } = req.query;
+        const users = await User.find({
+            fullName: { $regex: query, $options: "i" },
+            _id: { $ne: req.user._id }, 
+        }).limit(10);
+        res.status(200).json(users);
+    }
+    catch(error){
+        console.log("Error in searchUsers controller: ", error.message);
+        res.status(500).json({error: "Internal Server Error"});
+    }
+};
+
+export const addContact = async (req, res) => {
+    try{
+        const user = await User.findById(req.user._id);
+        const { userId } = req.body;
+
+        if (!user.contacts.includes(userId)) {
+            user.contacts.push(userId);
+            await user.save();
+        }
+
+        res.status(200).json({ success: true });
+    }
+    catch(error){
+        console.log("Error in addContact controller: ", error.message);
         res.status(500).json({error: "Internal Server Error"});
     }
 };

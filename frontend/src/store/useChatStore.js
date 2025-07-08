@@ -10,12 +10,13 @@ export const useChatStore = create ((set,get) => ({
     isUserLoading: false,
     isMessagesLoading: false,
     isSending: false,
+    searchResults: [],
 
     getUsers: async () => {
         set({ isUserLoading: true });
         try{
             const res = await axiosInstance.get("/messages/users");
-            set({ users: res.data });
+            set({ users: res.data.contacts });
         }
         catch(error){
             toast.error(error.response?.data?.message || "Internal Error")
@@ -73,6 +74,48 @@ export const useChatStore = create ((set,get) => ({
     unsubscribeFromMessages: () => {
         const socket = useAuthStore.getState().socket;
         socket.off("newMessage")
+    },
+
+    searchResults: [],
+
+    searchUsers: async (query) => {
+        try {
+            const res = await axiosInstance.get(`/users/search?query=${query}`);
+            set({ searchResults: res.data });
+        } 
+        catch (error) {
+            toast.error(error.response?.data?.message || "Search failed");
+            set({ searchResults: [] });
+        }
+    },
+
+
+    addContact: async (userId) => {
+        try { 
+            const res = await axiosInstance.post("/users/add", { userId });
+            if(res.data.success) {
+                toast.success("Contact added successfully");
+                get().getUsers();
+            }
+            return true;
+        }
+        catch (error) {
+            toast.error(error.response?.data?.message || "Failed to add contact");
+            return false;
+        }
+    },
+
+    deleteContact: async (contactId) => {
+        try {
+            const res = await axiosInstance.delete(`/users/remove/${contactId}`);
+            if(res.data.message === "Contact removed") {
+                toast.success("Contact removed successfully");
+                get().getUsers();
+            }
+        }       
+        catch (error) {
+            toast.error(error.response?.data?.message || "Failed to remove contact");
+        }
     },
 
     setSelectedUser: (selectedUser) => set({ selectedUser}),

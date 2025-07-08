@@ -1,7 +1,6 @@
 import express from "express";
 import { protectRoute } from "../middleware/auth.middleware.js";
-import { deleteContact, searchUsers } from "../controllers/user.controller.js";
-import { addContact } from "../controllers/message.controller.js";
+import { addContact, deleteContact, searchUsers } from "../controllers/user.controller.js";
 
 const router = express.Router();
 

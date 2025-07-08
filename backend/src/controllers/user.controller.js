@@ -15,6 +15,24 @@ export const searchUsers = async (req, res) => {
     }
 };
 
+export const addContact = async (req, res) => {
+    try{
+        const user = await User.findById(req.user._id);
+        const { userId } = req.body;
+
+        if (!user.contacts.includes(userId)) {
+            user.contacts.push(userId);
+            await user.save();
+        }
+
+        res.status(200).json({ success: true });
+    }
+    catch(error){
+        console.log("Error in addContact controller: ", error.message);
+        res.status(500).json({error: "Internal Server Error"});
+    }
+};
+
 export const deleteContact = async (req, res) => {
     try {
         const loggedInUserId = req.user._id;

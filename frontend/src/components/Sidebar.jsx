@@ -57,7 +57,7 @@ const Sidebar = () => {
                     }}
                     className="btn btn-sm btn-ghost"
                 >
-                    <UserPlus className="size-7" />
+                    <UserPlus className="size-6" />
                 </button>
             </div>
             <div className="mt-3 hidden lg:flex items-center gap-2">

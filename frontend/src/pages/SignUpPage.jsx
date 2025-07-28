@@ -41,7 +41,7 @@ const SignUpPage = () => {
         <div className="mt-4 h-[calc(100vh-4rem)] pt-20 grid lg:grid-cols-[2fr_1fr] overflow-hidden">
             {/*Left*/}
             <div className="flex flex-col flex-1 justify-center items-center p-6 overflow-hidden">
-                <div className="w-full max-w-md space-y-8">
+                <div className="min h-screen w-full max-w-md space-y-8">
                     {/*Logo*/}
                     <div className="text-center mb-8 flex-shrink-0">
                         <div className="flex flex-col items-center gap-2 group">
